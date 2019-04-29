@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Shop Page</title>
+  <meta charset="utf-8">
+
+
+  
+	<!-- Favicon -->
+	<link href="img/favicon.ico" rel="shortcut icon"/>
+
+	<!-- Google Font -->
+	<link href="https://fonts.googleapis.com/css?family=Montserrat:400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+	<!-- Stylesheets -->
+	<link rel="stylesheet" href="css/000bootstrapmin.css"/>
+	<link rel="stylesheet" href="css/000fontawesomemin.css"/>
+	<link rel="stylesheet" href="css/000flaticon.css"/>
+	<link rel="stylesheet" href="css/000owlcarouselmin.css"/>
+	<link rel="stylesheet" href="css/000animate.css"/>
+	<link rel="stylesheet" href="css/000style.css"/>
+	
+    <!--Fontawesome CDN-->
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+
+
+</head>
+<script>
+$(document).ready(function(){   
+	// handle button clicks         
+
+    function handleButtonResponse(data){
+      alert(data);
+      // parse the json string
+      var jsonObject = JSON.parse(data);
+      $('#reponseID').append( jsonObject.message );
+    }
+	
+	var  username;
+		
+		
+		
+		
+		
+		
+			
+
+			
+			
+	
+	
+		var urldata = window.location.search;
+			var ID = urldata.split('&')[0].split("=")[1];
+			if(sessionStorage.getItem('username') != null)
+			{
+				username = sessionStorage.getItem('username');
+				document.getElementById("usernameac").innerHTML = username;
+			}
+			else
+			{
+				window.location.href = "/index" ;
+			}
+		
+		
+		
+		
+		document.getElementById("rememberac").value = localStorage.getItem("rememberac");
+			
+			
+			var CartCount;
+				
+				$.ajax({
+				url: "http://127.0.0.1:4242/cart", 
+				type: 'POST',
+				data: "Name="+ username,
+				dataType: "html",
+				async: false,
+				success: function(result){
+					
+					if(result.length != 0)
+					{
+						
+						document.getElementById("cart").innerHTML = result ;
+						
+						 var total =  Number(document.getElementById("Subtotal001").innerText);
+						document.getElementById("total").innerText = "$" + total;
+					}
+					else
+					{
+						document.getElementById("cart").innerHTML = "<br><center><p>No message..</p></center>";
+					}
+					
+					
+					}, error: function (xhr, textStatus, errorThrown) {
+						
+						document.getElementById("cart").innerHTML= "No Favorite Item";
+						console.log(textStatus);
+      		}
+				});
+				
+				
+				
+				
+				
+				
+	
+	
+	
+							$("#add_btn001").click(function()
+							{
+								
+								var subtotal;
+								var quantity = document.getElementById("quantity001").value;
+		
+								subtotal = Number(quantity) + Number(1); 
+								document.getElementById("quantity001").value = subtotal;
+		
+								var price = document.getElementById("pricelbl001").innerText;
+		
+								document.getElementById("Subtotal001").innerText = Number(subtotal) * Number(price);
+								var total =  Number(document.getElementById("Subtotal001").innerText);
+								document.getElementById("total").innerText = "$" + total;
+	
+		
+		
+							});
+							
+							
+							
+							
+							$("#less_btn001").click(function()
+							{
+								
+								var subtotal;
+								var quantity = document.getElementById("quantity001").value;
+								var price = document.getElementById("pricelbl001").innerText;
+								
+								
+								if(document.getElementById("quantity001").value <=1)
+								{
+									document.getElementById("quantity001").value = 1;
+									document.getElementById("Subtotal001").innerText = document.getElementById("pricelbl001").innerText;
+								}
+								else 
+								{
+									subtotal = quantity - 1;
+									document.getElementById("quantity001").value = subtotal;
+									document.getElementById("Subtotal001").innerText = Number(subtotal) * Number(price);
+									var total =  Number(document.getElementById("Subtotal001").innerText);
+								document.getElementById("total").innerText = "$" + total;
+								}
+								
+		
+							});
+	
+		
+
+		
+
+		
+
+		
+		
+		
+		
+		//Register
+		$("#register_buttonme").click(function(){
+		var register_tempName, register_tempPassword;
+		register_tempName = document.forms["signup"]["Name"].value;
+		register_tempPassword = document.forms["signup"]["Password"].value;
+		if(register_tempName == "" || register_tempPassword == "")
+		{
+			alert("Please fill in all the blanks.");
+		}
+		else
+		{
+		
+			$.ajax({
+				url: "http://127.0.0.1:4242/Register", 
+				type: 'POST',
+				data: $('#register_formID').serialize(),
+				success: function(result){
+					alert("Registration success");
+					alert("Thanks for creating an account, your username is: " + register_tempName + ". Enjoy!");
+					sessionStorage.setItem('username', register_tempName);
+					window.location.href = "/Item?ID="+ID ;
+					}, error: function (xhr, textStatus, errorThrown) {
+						alert("[Registration Failed] please try again with other username");
+						console.log(textStatus);
+      		}
+				});
+			}
+	});
+  
+	//Login 
+	$("#login_buttonme").click(function(){
+	
+		var login_tempName, login_tempPassword, tempRemember;
+		login_tempName = document.forms["signin"]["Name"].value;
+		login_tempPassword = document.forms["signin"]["Password"].value;
+		tempRemember = document.forms["signin"]["remember"].checked;
+		
+		if(login_tempName == "" || login_tempPassword == "")
+		{
+			alert("Please fill in all the blanks.");
+		}
+		else
+		{
+			
+		
+			$.ajax({
+				url: "http://127.0.0.1:4242/Login", 
+				type: 'POST',
+				data: $('#login_formID').serialize(),
+				success: function(result){
+					alert("Login Successful");
+					sessionStorage.setItem('username', login_tempName);
+					//localStorage.setItem('rememberac', tempName);
+					
+					if(tempRemember == true)
+					{localStorage.setItem('rememberac', login_tempName);}
+					else
+					{
+					localStorage.removeItem("rememberac");
+					}
+					window.location.href = "/Item?ID="+ID ;
+					}, error: function (xhr, textStatus, errorThrown) {
+						alert("[Login Failed] username and password wrong");
+						console.log(textStatus);
+      		}
+				});
+			}
+	});
+});
+</script>
+<body>
+	<!-- Page Preloder -->
+	<div id="preloder">
+		<div class="loader"></div>
+	</div>
+<!-- Header section -->
+	<header class="header-section">
+           	
+            <div class="main_menu" id="mainNav">
+            	<nav class="navbar navbar-expand-lg navbar">
+					<div class="container">
+						<!-- Brand and toggle get grouped for better mobile display -->
+						<a href="/index" class="site-logo"><img src="./img/logo.png" alt=""></a>
+						
+						<!-- Collect the nav links, forms, and other content for toggling -->
+						<div class="collapse navbar-collapse offset" id="navbarSupportedContent">
+						
+							<ul class="nav navbar-nav menu_nav ml-auto">
+								<li class='nav-item'><a class='nav-link' href='/index'><font size="4" color='WHITE'>Home</font></a></li>
+								<li class='nav-item'><a class='nav-link' href='/shop'><font size="4" color='WHITE'>Shop</font></a></li>
+								<div class="user-panel" >
+								
+								<script>
+								if(sessionStorage.getItem('username') != null)
+								{
+									
+									document.write("<li class='nav-item submenu dropdown'>");
+									document.write("<a href='' class='dropdown-toggle' data-toggle='dropdown' role='button' aria-haspopup='true' aria-expanded='false'><font size='3' id='usernameac'></font></a>");
+									document.write("<ul class='dropdown-menu'>");
+									document.write("<li class='nav-item'><a class='nav-link' href='/favoritelist'><font size='2' color='black'>Favorite</font></a></li>");
+									document.write("<li class='nav-item'><a class='nav-link' href='/cart'><font size='2' color='black'>Cart</font></a></li>");
+									document.write("<li class='nav-item'><a class='nav-link' href='/setting'><font size='2' color='black'>Setting</font></a></li>");
+									document.write("<li class='nav-item'><a class='nav-link' href='/logout'><font size='2' color='black'>Logout</font></a></li>");
+									document.write("</ul>");
+									document.write("</li>");
+									
+								}
+								else
+								{
+									document.write("<li class='nav-item'><a class='nav-link' href='#loginModal' role='button' data-toggle='modal'>Login</a></li>");
+								}
+								  
+								</script>
+								</div>
+								
+							</ul>
+						</div> 
+					</div>
+            	</nav>
+            </div>
+        </header>
+	<!-- Header section end -->
+	
+	
+	<!--Login Modal section-->
+	<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="LoginModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="LoginModalLabel">Login</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+       <form id="login_formID" name="signin"><br>
+					<div class="input-group form-group" >
+						<div class="input-group-prepend">
+							<span class="input-group-text"><i class="fas fa-user"></i></span>
+						</div>
+							<script>
+					if(localStorage.getItem('rememberac') != null)
+					{
+						 
+						document.write("<input type='text' class='form-control' name='Name' placeholder='username' required  id='rememberac'>");
+					}else
+					{
+						document.write("<input type='text' class='form-control' name='Name' placeholder='username' required>");
+					}
+					</script>
+						
+						
+					</div>
+					
+					<div class="input-group form-group">
+						<div class="input-group-prepend">
+							<span class="input-group-text"><i class="fas fa-key"></i></span>
+						</div>
+						<input type="password" class="form-control" name="Password" placeholder="password" required>
+					</div>
+					
+					<script>
+					if(localStorage.getItem('rememberac') != null)
+					{
+						document.write("<input type='checkbox'  name='remember' value='remember' checked>Remember Me");
+					}else
+					{
+						document.write("<input type='checkbox'  name='remember' value='remember'>Remember Me");
+					}
+					</script>
+					
+					<div class="form-group">
+						
+					</div>
+					<div class="modal-footer">
+					<input class="btn btn-primary" id="login_buttonme" value="Login">
+					</div>	
+					
+				</form>
+			</div>
+      
+	  <div class="d-flex justify-content-center links">
+					Don't have an account?<a href="#registerModal" role='button' data-toggle='modal' data-dismiss='modal' >Sign Up</a>
+				</div>
+    </div>
+  </div>
+</div>
+<!-- Login Modal section end -->
+
+<!-- Register Modal section -->
+<div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="RegisterModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="RegisterModalLabel">Register</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+       <form id="register_formID" name="signup"><br>
+					<div class="input-group form-group">
+						<div class="input-group-prepend">
+							<span class="input-group-text"><i class="fas fa-user"></i></span>
+						</div>
+						<input type="text" class="form-control" name="Name" placeholder="username" required>
+						
+					</div>
+					<br>
+					<div class="input-group form-group">
+						<div class="input-group-prepend">
+							<span class="input-group-text"><i class="fas fa-key"></i></span>
+						</div>
+						<input type="password" class="form-control" name="Password" placeholder="password" required>
+					</div>
+					<!--<div class="row align-items-center remember">
+						<input type="checkbox">Remember Me
+					</div> -->
+					<div class="form-group">
+						
+					</div>
+					<div class="modal-footer">
+					<input  value="Register" id="register_buttonme" class="btn btn-primary">
+					</div>
+				</form>
+			</div>
+      
+	  <div class="d-flex justify-content-center links">
+					You have an account?<a href="#loginModal" role='button' data-toggle='modal' data-dismiss='modal'>Sign In</a>
+				</div>
+    </div>
+  </div>
+</div>
+<!-- Register Modal section end -->
+
+
+
+
+<!-- UserItemViews Modal section -->
+<div class="modal fade" id="UserItemViewsModal" tabindex="-1" role="dialog" aria-labelledby="UserItemViewsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="UserItemViewsModalLabel">Leave a Review</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+       <form id="UserItemViews_formID" name="reviewsform"><br>
+					<div class="form-group">
+						<label for="message-text" class="col-form-label">Message:</label>
+						<textarea class="form-control" id="message" required></textarea>
+						
+					</div>
+					<br>
+					
+					<!--<div class="row align-items-center remember">
+						<input type="checkbox">Remember Me
+					</div> -->
+					<div class="form-group">
+						
+					</div>
+					<div class="modal-footer">
+					
+					<input  value="Submit" id="UserItemViews_button" class="btn btn-primary">
+					</div>
+				</form>
+			</div>
+      
+	  
+    </div>
+  </div>
+</div>
+<!-- UserItemViews Modal section end -->
+
+	
+
+  <!-- Page Content -->
+  <section class="skills-and-testimonials-section spad set-bg" data-setbg="img/bg.jpg">
+ <div class="container">
+ <<div class="row">
+
+     
+		
+      <div class="col-lg-12">
+
+       
+        <!-- /.card -->
+
+        <div class="card card-outline-secondary my-4">
+          <div class="card-header">
+            Shopping Cart
+          </div>
+          <div class="card-body" id='cart'>
+		
+		
+          </div>
+        </div>
+        <!-- /.card -->
+
+      </div>
+      <!-- /.col-lg-9 -->
+
+    </div>
+	</div>
+    
+
+  </section>
+  <!-- /.container -->
+
+  <!-- Footer -->
+ <footer class="footer-section">
+		<div class="container">
+			
+			<div class="copyright"><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved 
+		</div>
+	</footer>
+
+  <!-- Bootstrap core JavaScript -->
+  
+  
+	<script src="js/000jquery321min.js"></script>
+	<script src="js/000bootstrapmin.js"></script>
+	<script src="js/000owlcarouselmin.js"></script>
+	<script src="js/000circleprogressmin.js"></script>
+	<script src="js/000main.js"></script>
+
+</body>
+
+</html>
