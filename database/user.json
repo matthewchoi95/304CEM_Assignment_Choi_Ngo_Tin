@@ -1,0 +1,3 @@
+{"_id":{"$oid":"5c7fd9ba3b940d07d80f00bc"},"Name":"abc","Password":"abc"}
+{"_id":{"$oid":"5cbf6a71b20e5d1768056e6f"},"Name":"AbcAbc","Password":"AbcAbc"}
+{"_id":{"$oid":"5cbf6af6b20e5d1768056e70"},"Name":"Test123","Password":"123456","Email":"babichoi95@gmail.com","Phone":"61521028"}
